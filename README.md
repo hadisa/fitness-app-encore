@@ -1,4 +1,4 @@
-# Fitness Tracker API with GraphQL and Go
+# Fitness API with GraphQL and Go
 
 A modern, scalable fitness tracking platform built with Go, Encore, and GraphQL. This project provides a robust backend for managing fitness data, including trainee profiles, workout plans, progress tracking, and trainer-trainee interactions.
 
@@ -40,10 +40,9 @@ A modern, scalable fitness tracking platform built with Go, Encore, and GraphQL.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/hadisa/fitness-tracker.git
-   cd fitness-tracker
+   git clone https://github.com/hadisa/fitness-app-encore.git
+   cd fitness-app-encore
    ```
-
 2. **Install dependencies**
    ```bash
    go mod download
