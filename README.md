@@ -1,108 +1,153 @@
-# GraphQL Starter
+# Fitness Tracker API with GraphQL and Go
 
-This starter shows how you can build a GraphQL server with Encore, implementing a basic url shortener as an example.
+A modern, scalable fitness tracking platform built with Go, Encore, and GraphQL. This project provides a robust backend for managing fitness data, including trainee profiles, workout plans, progress tracking, and trainer-trainee interactions.
 
-## Prerequisites 
+## 🚀 Technologies
 
-**Install Encore:**
-- **macOS:** `brew install encoredev/tap/encore`
-- **Linux:** `curl -L https://encore.dev/install.sh | bash`
-- **Windows:** `iwr https://encore.dev/install.ps1 | iex`
+- **Backend**: Go 1.23+
+- **API Framework**: Encore
+- **GraphQL**: gqlgen
+- **Database**: PostgreSQL
+- **Containerization**: Docker
+- **Authentication**: JWT
+
+## ✨ Features
+
+- **Admin Service**: User management, authentication, and system configuration
+- **Trainee Service**: Fitness tracking, workout management, progress monitoring
+- **GraphQL API**: Type-safe, self-documenting API with real-time capabilities
+- **Database Migrations**: Automated schema management
+- **Developer Experience**: Built-in testing, local development, and observability
+
+## 🛠 Prerequisites
+
+- **Go 1.23** or later ([Installation Guide](https://golang.org/doc/install))
+- **Encore CLI** (Install with one of the following):
+  ```bash
+  # macOS
+  brew install encoredev/tap/encore
   
-**Docker:**
-1. Install [Docker](https://docker.com)
-2. Start Docker
+  # Linux
+  curl -L https://encore.dev/install.sh | bash
+  
+  # Windows (PowerShell)
+  iwr https://encore.dev/install.ps1 | iex
+  ```
+- **Docker** ([Installation Guide](https://docs.docker.com/get-docker/))
+- **Git** ([Installation Guide](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
 
-## Create app
+## 🚀 Getting Started
 
-Create a local app from this template:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/hadisa/fitness-tracker.git
+   cd fitness-tracker
+   ```
+
+2. **Install dependencies**
+   ```bash
+   go mod download
+   ```
+
+3. **Start the development environment**
+   Make sure Docker is running, then start the application:
+   ```bash
+   encore run
+   ```
+
+4. **Access the development dashboard**
+   Open [http://localhost:9400](http://localhost:9400) in your browser to access Encore's local developer dashboard.
+
+## 🎮 GraphQL Playground
+
+Access the GraphQL Playground at [http://localhost:4000/graphql/playground](http://localhost:4000/graphql/playground) to explore and test the GraphQL API.
+
+## 📚 Project Structure
+
+```
+.
+├── admin/                  # Admin service
+│   ├── migrations/         # Database migrations
+│   └── admin.go            # Admin service implementation
+├── trainee/                # Trainee service
+│   ├── migrations/         # Database migrations
+│   └── trainee.go          # Trainee service implementation
+├── graphql/                # GraphQL schema and resolvers
+│   ├── admin.graphqls      # Admin GraphQL schema
+│   ├── admin.resolvers.go  # Admin resolvers
+│   ├── trainee.graphqls    # Trainee GraphQL schema
+│   └── trainee.resolvers.go # Trainee resolvers
+├── .gitignore
+├── go.mod
+├── go.sum
+└── README.md
+```
+
+## 🔧 Code Generation
+
+This project uses `gqlgen` for GraphQL code generation. After modifying any `.graphqls` files, run:
 
 ```bash
-encore app create my-app-name --example=graphql
+go run github.com/99designs/gqlgen generate
 ```
 
-## Run app locally
+## 🌐 API Documentation
 
-Before running your application, make sure you have Docker installed and running. Then run this command from your application's root folder:
+### Admin Service
+- **Authentication**
+- **User Management**
+- **System Configuration
+
+### Trainee Service
+- **Profile Management**
+- **Workout Tracking**
+- **Progress Monitoring**
+- **Trainer-Trainee Communication**
+
+## 🧪 Running Tests
 
 ```bash
-encore run
-```
-
-While `encore run` is running, open [http://localhost:9400/](http://localhost:9400/) to view Encore's [local developer dashboard](https://encore.dev/docs/go/observability/dev-dash).
-
-## View the GraphQL Playground
-Open http://localhost:4000/graphql/playground in your browser.
-
-## Using the API
-
-Execute the below queries using the GraphQL Playground (or method of your choice).
-
-#### Shorten a URL
-
-```graphql
-mutation {
-  shorten(url: "https://encore.dev") {
-    id
-    url
-  }
-}
-```
-
-#### Listing all shortened URLs
-
-```graphql
-query {
-  urls {
-    id
-    url
-  }
-}
-```
-
-#### Getting a URL from a shortened ID
-
-```graphql
-query {
-  get(id: "some-id") {  # Use an actual ID you have
-    id
-    url
-  }
-}
-```
-
-## Deployment
-
-### Self-hosting
-
-See the [self-hosting instructions](https://encore.dev/docs/go/self-host/docker-build) for how to use `encore build docker` to create a Docker image and configure it.
-
-### Encore Cloud Platform
-
-Deploy your application to a free staging environment in Encore's development cloud using `git push encore`:
-
-```bash
-git add -A .
-git commit -m 'Commit message'
-git push encore
-```
-
-You can also open your app in the [Cloud Dashboard](https://app.encore.dev) to integrate with GitHub, or connect your AWS/GCP account, enabling Encore to automatically handle cloud deployments for you.
-
-## Link to GitHub
-
-Follow these steps to link your app to GitHub:
-
-1. Create a GitHub repo, commit and push the app.
-2. Open your app in the [Cloud Dashboard](https://app.encore.dev).
-3. Go to **Settings ➔ GitHub** and click on **Link app to GitHub** to link your app to GitHub and select the repo you just created.
-4. To configure Encore to automatically trigger deploys when you push to a specific branch name, go to the **Overview** page for your intended environment. Click on **Settings** and then in the section **Branch Push** configure the **Branch name** and hit **Save**.
-5. Commit and push a change to GitHub to trigger a deploy.
-
-[Learn more in the docs](https://encore.dev/docs/platform/integrations/github)
-
-## Testing
-
-```bash
+# Run all tests
 encore test ./...
+
+# Run tests with coverage
+encore test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out
 ```
+
+## 📦 Deployment
+
+This application is designed to be deployed using Encore's cloud platform:
+
+```bash
+# Deploy to staging
+encore app deploy --env=staging
+
+# Deploy to production
+encore app deploy --env=production
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👤 Author
+
+**Hadisa Norozi**
+
+- GitHub: [@hadisa](https://github.com/hadisa)
+- Email: [Your Email]
+
+## 🙏 Acknowledgments
+
+- Built with [Encore](https://encore.dev/)
+- GraphQL implementation using [gqlgen](https://gqlgen.com/)
+- Database powered by PostgreSQL

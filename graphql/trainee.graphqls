@@ -1,0 +1,233 @@
+scalar Upload
+
+type Query {
+  # Profile
+  getMyProfile: Trainee!
+  
+  # Workouts
+  getMyWorkouts: [Workout!]!
+  getWorkoutById(workoutId: ID!): Workout!
+  getWorkoutHistory: [CompletedWorkout!]!
+  
+  # Nutrition
+  getMyMealPlans: [MealPlan!]!
+  getMealPlanById(mealPlanId: ID!): MealPlan!
+  getNutritionLogs(date: String!): [NutritionLog!]!
+  
+  # Progress
+  getProgressMetrics: ProgressMetrics!
+  getProgressPhotos: [ProgressPhoto!]!
+  
+  # Trainer Interaction
+  getMyTrainers: [Trainer!]!
+  getMessages(trainerId: ID!): [Message!]!
+}
+
+type Mutation {
+  # Profile
+  updateProfile(input: TraineeInput!): Trainee!
+  
+  # Workouts
+  logWorkout(input: WorkoutLogInput!): CompletedWorkout!
+  
+  # Nutrition
+  logNutrition(input: NutritionLogInput!): NutritionLog!
+  createCustomMealPlan(input: MealPlanInput!): MealPlan!
+  
+  # Progress
+  uploadProgressPhoto(image: Upload!): ProgressPhoto!
+  
+  # Trainer Interaction
+  sendMessage(trainerId: ID!, content: String!): Message!
+  requestTrainer(trainerId: ID!): Boolean!
+}
+
+type Trainee {
+  id: ID!
+  user: User!
+  age: Int!
+  height: Float!
+  weight: Float!
+  fitnessGoals: [String!]!
+  injuries: [String!]!
+  preferences: [String!]!
+}
+
+type Workout {
+  id: ID!
+  name: String!
+  description: String!
+  exercises: [Exercise!]!
+  duration: Int!
+  difficulty: DifficultyLevel!
+  createdBy: Trainer
+}
+
+type CompletedWorkout {
+  id: ID!
+  workout: Workout!
+  date: String!
+  duration: Int!
+  notes: String
+  rating: Int
+}
+
+
+type MealPlan {
+  id: ID!
+  name: String!
+  description: String!
+  meals: [Meal!]!
+  calories: Int!
+  macros: Macros!
+  createdBy: Trainer
+}
+
+type Meal {
+  id: ID!
+  name: String!
+  description: String!
+  ingredients: [String!]!
+  instructions: String
+  calories: Int!
+  macros: Macros!
+  mealType: MealType!
+}
+
+type NutritionLog {
+  id: ID!
+  meal: Meal!
+  date: String!
+  time: String!
+  portionSize: String
+  notes: String
+}
+
+type ProgressMetrics {
+  weight: [WeightEntry!]!
+  bodyFat: [BodyFatEntry!]!
+  strength: [StrengthEntry!]!
+}
+
+type ProgressPhoto {
+  id: ID!
+  url: String!
+  date: String!
+  notes: String
+  angle: PhotoAngle!
+}
+
+type Message {
+  id: ID!
+  sender: User!
+  content: String!
+  timestamp: String!
+  isRead: Boolean!
+}
+
+type Trainer {
+  id: ID!
+  user: User!
+  specialization: [String!]!
+  yearsOfExperience: Int!
+  rating: Float
+}
+
+
+
+type Exercise {
+  id: ID!
+  name: String!
+  description: String!
+  muscleGroup: String
+  equipment: String
+}
+
+type Macros {
+  protein: Float!
+  carbs: Float!
+  fat: Float!
+}
+
+type WeightEntry {
+  date: String!
+  value: Float!
+}
+
+type BodyFatEntry {
+  date: String!
+  value: Float!
+}
+
+type StrengthEntry {
+  exerciseId: ID!
+  date: String!
+  maxWeight: Float!
+}
+
+enum DifficultyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+enum PhotoAngle {
+  FRONT
+  SIDE
+  BACK
+}
+
+input TraineeInput {
+  age: Int
+  height: Float
+  weight: Float
+  fitnessGoals: [String!]
+  injuries: [String!]
+  preferences: [String!]
+}
+
+input WorkoutLogInput {
+  workoutId: ID!
+  duration: Int!
+  notes: String
+  rating: Int
+}
+
+input NutritionLogInput {
+  mealId: ID!
+  date: String!
+  time: String!
+  portionSize: String
+  notes: String
+}
+
+input MealPlanInput {
+  name: String!
+  description: String!
+  meals: [MealInput!]!
+  calories: Int!
+  macros: MacrosInput!
+}
+
+input MealInput {
+  name: String!
+  description: String!
+  ingredients: [String!]!
+  instructions: String
+  calories: Int!
+  macros: MacrosInput!
+  mealType: MealType!
+}
+
+input MacrosInput {
+  protein: Float!
+  carbs: Float!
+  fat: Float!
+}

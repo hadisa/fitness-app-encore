@@ -1,0 +1,67 @@
+input UserRegisterRequest {
+    username: String!
+    email: String!
+    password: String!
+    fullname: String!
+    address: String
+    province_id: Int
+    city_id: Int
+    district_id: Int
+}
+
+type User {
+    id: Int
+    username: String
+    email: String
+    created_at: String
+    updated_at: String
+}
+
+type UserDetail {
+    id: Int
+    user_id: Int
+    fullname: String
+    address: String
+    postal_code: String
+    province: Province
+    district: District
+    city: City
+    created_at: String
+    updated_at: String
+}
+
+type ProfileResponse {
+    user: User
+    user_detail: UserDetail
+}
+
+type AuthResponse {
+    token: String!
+    user: User!
+}
+
+# action
+extend type Query {
+    me: ProfileResponse
+}
+
+extend type Mutation {
+    register(user: UserRegisterRequest!): AuthResponse!
+    login(username: String!, password: String!): AuthResponse!
+}
+
+# Assuming these types are defined elsewhere in your schema
+type Province {
+    id: Int!
+    name: String!
+}
+
+type District {
+    id: Int!
+    name: String!
+}
+
+type City {
+    id: Int!
+    name: String!
+}
