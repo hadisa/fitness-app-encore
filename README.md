@@ -143,7 +143,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Hadisa Norozi**
 
 - GitHub: [@hadisa](https://github.com/hadisa)
-- Email: [Your Email]
+- Email: hadisa.norozi@gmail.com
 
 ## 🙏 Acknowledgments
 

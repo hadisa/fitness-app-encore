@@ -1,4 +1,4 @@
-scalar Upload
+
 
 type Query {
   # Profile
@@ -125,23 +125,9 @@ type Message {
   isRead: Boolean!
 }
 
-type Trainer {
-  id: ID!
-  user: User!
-  specialization: [String!]!
-  yearsOfExperience: Int!
-  rating: Float
-}
 
 
 
-type Exercise {
-  id: ID!
-  name: String!
-  description: String!
-  muscleGroup: String
-  equipment: String
-}
 
 type Macros {
   protein: Float!
@@ -165,11 +151,7 @@ type StrengthEntry {
   maxWeight: Float!
 }
 
-enum DifficultyLevel {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
-}
+
 
 enum MealType {
   BREAKFAST

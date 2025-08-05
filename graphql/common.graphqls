@@ -1,0 +1,71 @@
+# Common types and interfaces used across the application
+
+# Common scalar types
+scalar Time
+scalar Upload
+
+# Common interfaces
+interface Node {
+  id: ID!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+# Common enums
+enum DifficultyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NOSHOW
+}
+
+# Common input types
+input PaginationInput {
+  first: Int
+  after: String
+  last: Int
+  before: String
+}
+
+# Common response types
+type DeletionResponse {
+  success: Boolean!
+  message: String
+}
+
+# Common error types
+type Error {
+  field: String!
+  message: String!
+}
+
+
+type Trainer {
+  id: ID!
+  user: User!
+  specialization: [String!]!
+  certifications: [Certification!]!
+  yearsOfExperience: Int!
+  bio: String!
+  hourlyRate: Float!
+  rating: Float
+}
+
+type Exercise {
+  id: ID!
+  name: String!
+  description: String!
+  muscleGroup: String
+  equipment: String
+}

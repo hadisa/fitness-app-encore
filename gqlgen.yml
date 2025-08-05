@@ -44,6 +44,7 @@ resolver:
 autobind:
  - "encore.app/trainee"
  - "encore.app/admin"
+ - "encore.app/trainer"
 
 # This section declares type mapping between the GraphQL and go type systems
 #

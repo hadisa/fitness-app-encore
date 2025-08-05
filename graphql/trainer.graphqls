@@ -1,0 +1,118 @@
+extend type Query {
+  # Profile
+  getTrainerProfile: Trainer!
+  
+  # Clients
+  getTrainerClients: [Trainee!]!
+  getClientDetails(clientId: ID!): TraineeWithMetrics!
+  
+  # Workouts
+  getWorkoutTemplates: [Workout!]!
+  getWorkoutTemplateById(workoutId: ID!): Workout!
+  
+  # Nutrition
+  getMealPlanTemplates: [MealPlan!]!
+  getMealPlanTemplateById(mealPlanId: ID!): MealPlan!
+  
+  # Messages
+  getTrainerMessages(clientId: ID): [Message!]!
+  
+  # Availability
+  getMyAvailability: [AvailabilitySlot!]!
+  getMyAppointments: [Appointment!]!
+}
+
+extend type Mutation {
+  # Profile
+  updateTrainerProfile(input: TrainerInput!): Trainer!
+  updateTrainerCertifications(input: [CertificationInput!]!): [Certification!]!
+  
+  # Clients
+  assignWorkoutToClient(clientId: ID!, workoutId: ID!): Boolean!
+  assignMealPlanToClient(clientId: ID!, mealPlanId: ID!): Boolean!
+  
+  # Workouts
+  createWorkoutTemplate(input: WorkoutInput!): Workout!
+  updateWorkoutTemplate(workoutId: ID!, input: WorkoutInput!): Workout!
+  
+  # Nutrition
+  createMealPlanTemplate(input: MealPlanInput!): MealPlan!
+  updateMealPlanTemplate(mealPlanId: ID!, input: MealPlanInput!): MealPlan!
+  
+  # Messages
+  sendTrainerMessage(clientId: ID!, content: String!): Message!
+  
+  # Availability
+  setAvailability(input: [AvailabilityInput!]!): [AvailabilitySlot!]!
+  createAppointment(clientId: ID!, slotId: ID!): Appointment!
+}
+
+
+
+type TraineeWithMetrics {
+  trainee: Trainee!
+  metrics: ProgressMetrics!
+  lastWorkouts: [CompletedWorkout!]!
+  nutritionLogs: [NutritionLog!]!
+}
+
+type Certification {
+  id: ID!
+  name: String!
+  issuingOrganization: String!
+  dateIssued: String!
+  credentialId: String
+}
+
+type AvailabilitySlot {
+  id: ID!
+  dayOfWeek: Int!
+  startTime: String!
+  endTime: String!
+  isRecurring: Boolean!
+}
+
+type Appointment {
+  id: ID!
+  client: Trainee!
+  slot: AvailabilitySlot!
+  status: AppointmentStatus!
+  notes: String
+}
+
+input TrainerInput {
+  specialization: [String!]
+  yearsOfExperience: Int
+  bio: String
+  hourlyRate: Float
+}
+
+input CertificationInput {
+  name: String!
+  issuingOrganization: String!
+  dateIssued: String!
+  credentialId: String
+}
+
+input WorkoutInput {
+  name: String!
+  description: String!
+  exercises: [ExerciseInput!]!
+  duration: Int!
+  difficulty: DifficultyLevel!
+}
+
+input AvailabilityInput {
+  dayOfWeek: Int!
+  startTime: String!
+  endTime: String!
+  isRecurring: Boolean!
+}
+
+input ExerciseInput {
+  name: String!
+  description: String!
+  muscleGroup: String
+  equipment: String
+}
+

@@ -8,12 +8,31 @@ import (
 	"io"
 	"strconv"
 
-	"encore.app/admin"
+	"encore.app/trainee"
 )
+
+type Node interface {
+	IsNode()
+	GetID() string
+}
+
+type AvailabilityInput struct {
+	DayOfWeek   int    `json:"dayOfWeek"`
+	StartTime   string `json:"startTime"`
+	EndTime     string `json:"endTime"`
+	IsRecurring bool   `json:"isRecurring"`
+}
 
 type BodyFatEntry struct {
 	Date  string  `json:"date"`
 	Value float64 `json:"value"`
+}
+
+type CertificationInput struct {
+	Name                string  `json:"name"`
+	IssuingOrganization string  `json:"issuingOrganization"`
+	DateIssued          string  `json:"dateIssued"`
+	CredentialID        *string `json:"credentialId,omitempty"`
 }
 
 type City struct {
@@ -21,13 +40,9 @@ type City struct {
 	Name string `json:"name"`
 }
 
-type CompletedWorkout struct {
-	ID       string   `json:"id"`
-	Workout  *Workout `json:"workout"`
-	Date     string   `json:"date"`
-	Duration int      `json:"duration"`
-	Notes    *string  `json:"notes,omitempty"`
-	Rating   *int     `json:"rating,omitempty"`
+type DeletionResponse struct {
+	Success bool    `json:"success"`
+	Message *string `json:"message,omitempty"`
 }
 
 type District struct {
@@ -35,8 +50,20 @@ type District struct {
 	Name string `json:"name"`
 }
 
+type Error struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
 type Exercise struct {
 	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	MuscleGroup *string `json:"muscleGroup,omitempty"`
+	Equipment   *string `json:"equipment,omitempty"`
+}
+
+type ExerciseInput struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	MuscleGroup *string `json:"muscleGroup,omitempty"`
@@ -77,13 +104,13 @@ type MealInput struct {
 }
 
 type MealPlan struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Meals       []*Meal  `json:"meals"`
-	Calories    int      `json:"calories"`
-	Macros      *Macros  `json:"macros"`
-	CreatedBy   *Trainer `json:"createdBy,omitempty"`
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	Description string           `json:"description"`
+	Meals       []*Meal          `json:"meals"`
+	Calories    int              `json:"calories"`
+	Macros      *Macros          `json:"macros"`
+	CreatedBy   *trainee.Trainer `json:"createdBy,omitempty"`
 }
 
 type MealPlanInput struct {
@@ -92,14 +119,6 @@ type MealPlanInput struct {
 	Meals       []*MealInput `json:"meals"`
 	Calories    int          `json:"calories"`
 	Macros      *MacrosInput `json:"macros"`
-}
-
-type Message struct {
-	ID        string      `json:"id"`
-	Sender    *admin.User `json:"sender"`
-	Content   string      `json:"content"`
-	Timestamp string      `json:"timestamp"`
-	IsRead    bool        `json:"isRead"`
 }
 
 type Mutation struct {
@@ -122,18 +141,24 @@ type NutritionLogInput struct {
 	Notes       *string `json:"notes,omitempty"`
 }
 
+type PageInfo struct {
+	HasNextPage     bool    `json:"hasNextPage"`
+	HasPreviousPage bool    `json:"hasPreviousPage"`
+	StartCursor     *string `json:"startCursor,omitempty"`
+	EndCursor       *string `json:"endCursor,omitempty"`
+}
+
+type PaginationInput struct {
+	First  *int    `json:"first,omitempty"`
+	After  *string `json:"after,omitempty"`
+	Last   *int    `json:"last,omitempty"`
+	Before *string `json:"before,omitempty"`
+}
+
 type ProgressMetrics struct {
 	Weight   []*WeightEntry   `json:"weight"`
 	BodyFat  []*BodyFatEntry  `json:"bodyFat"`
 	Strength []*StrengthEntry `json:"strength"`
-}
-
-type ProgressPhoto struct {
-	ID    string     `json:"id"`
-	URL   string     `json:"url"`
-	Date  string     `json:"date"`
-	Notes *string    `json:"notes,omitempty"`
-	Angle PhotoAngle `json:"angle"`
 }
 
 type Province struct {
@@ -150,17 +175,6 @@ type StrengthEntry struct {
 	MaxWeight  float64 `json:"maxWeight"`
 }
 
-type Trainee struct {
-	ID           string      `json:"id"`
-	User         *admin.User `json:"user"`
-	Age          int         `json:"age"`
-	Height       float64     `json:"height"`
-	Weight       float64     `json:"weight"`
-	FitnessGoals []string    `json:"fitnessGoals"`
-	Injuries     []string    `json:"injuries"`
-	Preferences  []string    `json:"preferences"`
-}
-
 type TraineeInput struct {
 	Age          *int     `json:"age,omitempty"`
 	Height       *float64 `json:"height,omitempty"`
@@ -170,12 +184,18 @@ type TraineeInput struct {
 	Preferences  []string `json:"preferences,omitempty"`
 }
 
-type Trainer struct {
-	ID                string      `json:"id"`
-	User              *admin.User `json:"user"`
-	Specialization    []string    `json:"specialization"`
-	YearsOfExperience int         `json:"yearsOfExperience"`
-	Rating            *float64    `json:"rating,omitempty"`
+type TraineeWithMetrics struct {
+	Trainee       *trainee.Trainee            `json:"trainee"`
+	Metrics       *ProgressMetrics            `json:"metrics"`
+	LastWorkouts  []*trainee.CompletedWorkout `json:"lastWorkouts"`
+	NutritionLogs []*NutritionLog             `json:"nutritionLogs"`
+}
+
+type TrainerInput struct {
+	Specialization    []string `json:"specialization,omitempty"`
+	YearsOfExperience *int     `json:"yearsOfExperience,omitempty"`
+	Bio               *string  `json:"bio,omitempty"`
+	HourlyRate        *float64 `json:"hourlyRate,omitempty"`
 }
 
 type UserRegisterRequest struct {
@@ -194,14 +214,12 @@ type WeightEntry struct {
 	Value float64 `json:"value"`
 }
 
-type Workout struct {
-	ID          string          `json:"id"`
-	Name        string          `json:"name"`
-	Description string          `json:"description"`
-	Exercises   []*Exercise     `json:"exercises"`
-	Duration    int             `json:"duration"`
-	Difficulty  DifficultyLevel `json:"difficulty"`
-	CreatedBy   *Trainer        `json:"createdBy,omitempty"`
+type WorkoutInput struct {
+	Name        string           `json:"name"`
+	Description string           `json:"description"`
+	Exercises   []*ExerciseInput `json:"exercises"`
+	Duration    int              `json:"duration"`
+	Difficulty  DifficultyLevel  `json:"difficulty"`
 }
 
 type WorkoutLogInput struct {
@@ -209,6 +227,65 @@ type WorkoutLogInput struct {
 	Duration  int     `json:"duration"`
 	Notes     *string `json:"notes,omitempty"`
 	Rating    *int    `json:"rating,omitempty"`
+}
+
+type AppointmentStatus string
+
+const (
+	AppointmentStatusScheduled AppointmentStatus = "SCHEDULED"
+	AppointmentStatusCompleted AppointmentStatus = "COMPLETED"
+	AppointmentStatusCancelled AppointmentStatus = "CANCELLED"
+	AppointmentStatusNoshow    AppointmentStatus = "NOSHOW"
+)
+
+var AllAppointmentStatus = []AppointmentStatus{
+	AppointmentStatusScheduled,
+	AppointmentStatusCompleted,
+	AppointmentStatusCancelled,
+	AppointmentStatusNoshow,
+}
+
+func (e AppointmentStatus) IsValid() bool {
+	switch e {
+	case AppointmentStatusScheduled, AppointmentStatusCompleted, AppointmentStatusCancelled, AppointmentStatusNoshow:
+		return true
+	}
+	return false
+}
+
+func (e AppointmentStatus) String() string {
+	return string(e)
+}
+
+func (e *AppointmentStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AppointmentStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AppointmentStatus", str)
+	}
+	return nil
+}
+
+func (e AppointmentStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *AppointmentStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e AppointmentStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type DifficultyLevel string
